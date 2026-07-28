@@ -355,7 +355,6 @@ class TenkiSandboxBackendImpl {
     return await client.create({
       name: this.params.runtimePaths.runtimeId,
       tags: [TENKI_SESSION_TAG, this.params.runtimePaths.runtimeId, ...this.cfg.tags],
-      projectId: this.cfg.projectId,
       workspaceId: this.cfg.workspaceId,
       image: this.cfg.image,
       idleTimeoutMinutes: this.cfg.idleTimeoutMinutes,

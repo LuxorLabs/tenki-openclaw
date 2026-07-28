@@ -17,10 +17,6 @@
         "type": "string",
         "minLength": 1
       },
-      "projectId": {
-        "type": "string",
-        "minLength": 1
-      },
       "workspaceId": {
         "type": "string",
         "minLength": 1
@@ -68,10 +64,6 @@
       "label": "API Base URL",
       "help": "Tenki API endpoint override. Defaults to the SDK's TENKI_API_ENDPOINT / TENKI_API_URL environment fallback.",
       "advanced": true
-    },
-    "projectId": {
-      "label": "Project ID",
-      "help": "Tenki project the sessions are created in. Required for user tokens; see `tenki status`."
     },
     "workspaceId": {
       "label": "Workspace ID",

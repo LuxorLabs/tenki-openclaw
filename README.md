@@ -56,7 +56,6 @@ Authentication uses `TENKI_AUTH_TOKEN` / `TENKI_API_KEY` from the environment (p
 | --- | --- |
 | `authToken` | Tenki API token. Prefer the `TENKI_AUTH_TOKEN` / `TENKI_API_KEY` env vars over storing it in config. |
 | `baseUrl` | Tenki API endpoint override. Defaults to the SDK's `TENKI_API_ENDPOINT` / `TENKI_API_URL` fallback. |
-| `projectId` | Tenki project the sessions are created in. Required for user tokens; see `tenki status`. |
 | `workspaceId` | Tenki workspace the sessions are created in. |
 | `image` | Base image id for created sandbox sessions. Omit for the Tenki default image. |
 | `workspaceRoot` | Absolute path inside the session used for per-scope workspaces. |
