@@ -8,18 +8,17 @@ Originally proposed as a bundled OpenClaw extension in [openclaw/openclaw#111792
 
 ## Install
 
-From a local checkout:
+From ClawHub ([`@tenkicloud/openclaw-sandbox`](https://clawhub.ai)):
+
+```bash
+openclaw plugins install clawhub:@tenkicloud/openclaw-sandbox
+```
+
+Or from a local checkout:
 
 ```bash
 git clone https://github.com/LuxorLabs/openclaw-tenki-sandbox
 openclaw plugins install ./openclaw-tenki-sandbox
-```
-
-Or, once published, via ClawHub / npm:
-
-```bash
-openclaw plugins install clawhub:luxorlabs/openclaw-tenki-sandbox
-openclaw plugins install npm:@tenkicloud/openclaw-sandbox
 ```
 
 ## Usage
