@@ -1,6 +1,6 @@
 # OpenClaw Tenki Cloud Sandbox
 
-OpenClaw sandbox backend that runs agent tool execution in remote [Tenki Cloud](https://tenki.cloud) microVM sessions via the [`@tenkicloud/sandbox`](https://www.npmjs.com/package/@tenkicloud/sandbox) TypeScript SDK.
+OpenClaw sandbox backend that runs agent tool execution in remote [Tenki Cloud](https://tenki.cloud) VM sessions via the [`@tenkicloud/sandbox`](https://www.npmjs.com/package/@tenkicloud/sandbox) TypeScript SDK.
 
 One Tenki session is created per sandbox scope (found-or-created by a runtime tag; paused sessions are resumed). The local workspace is mirrored into the session, shell and filesystem-bridge commands run over the SDK exec surface, and interactive exec runs over plain `ssh` through an in-process loopback forwarder backed by the SDK's gateway SSH stream.
 
