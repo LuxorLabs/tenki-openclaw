@@ -11,98 +11,68 @@
     "properties": {
       "authToken": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "title": "Auth Token",
+        "description": "Tenki API token. Prefer the TENKI_AUTH_TOKEN or TENKI_API_KEY environment variable over storing it in config.",
+        "writeOnly": true
       },
       "baseUrl": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "title": "API Base URL",
+        "description": "Tenki API endpoint override. Defaults to the SDK's TENKI_API_ENDPOINT / TENKI_API_URL environment fallback."
       },
       "workspaceId": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "title": "Workspace ID",
+        "description": "Tenki workspace the sessions are created in."
       },
       "image": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "title": "Base Image",
+        "description": "Base image id for created sandbox sessions. Omit for the Tenki default image."
       },
       "workspaceRoot": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "title": "Workspace Root",
+        "description": "Absolute path inside the session used for per-scope workspaces."
       },
       "idleTimeoutMinutes": {
         "type": "number",
-        "minimum": 1
+        "minimum": 1,
+        "title": "Idle Timeout Minutes",
+        "description": "Terminate the session after this many idle minutes."
       },
       "cpuCores": {
         "type": "number",
-        "minimum": 1
+        "minimum": 1,
+        "title": "CPU Cores",
+        "description": "CPU cores per session."
       },
       "memoryMb": {
         "type": "number",
-        "minimum": 1
+        "minimum": 1,
+        "title": "Memory MiB",
+        "description": "Memory per session in MiB."
       },
       "diskSizeGb": {
         "type": "number",
-        "minimum": 1
+        "minimum": 1,
+        "title": "Disk GiB",
+        "description": "Disk per session in GiB."
       },
       "tags": {
         "type": "array",
         "items": {
           "type": "string",
           "minLength": 1
-        }
+        },
+        "title": "Session Tags",
+        "description": "Extra tags attached to created sessions."
       }
-    }
-  },
-  "uiHints": {
-    "authToken": {
-      "label": "Auth Token",
-      "help": "Tenki API token. Prefer the TENKI_AUTH_TOKEN or TENKI_API_KEY environment variable over storing it in config.",
-      "sensitive": true
-    },
-    "baseUrl": {
-      "label": "API Base URL",
-      "help": "Tenki API endpoint override. Defaults to the SDK's TENKI_API_ENDPOINT / TENKI_API_URL environment fallback.",
-      "advanced": true
-    },
-    "workspaceId": {
-      "label": "Workspace ID",
-      "help": "Tenki workspace the sessions are created in.",
-      "advanced": true
-    },
-    "image": {
-      "label": "Base Image",
-      "help": "Base image id for created sandbox sessions. Omit for the Tenki default image."
-    },
-    "workspaceRoot": {
-      "label": "Workspace Root",
-      "help": "Absolute path inside the session used for per-scope workspaces.",
-      "advanced": true
-    },
-    "idleTimeoutMinutes": {
-      "label": "Idle Timeout Minutes",
-      "help": "Terminate the session after this many idle minutes.",
-      "advanced": true
-    },
-    "cpuCores": {
-      "label": "CPU Cores",
-      "help": "CPU cores per session.",
-      "advanced": true
-    },
-    "memoryMb": {
-      "label": "Memory MiB",
-      "help": "Memory per session in MiB.",
-      "advanced": true
-    },
-    "diskSizeGb": {
-      "label": "Disk GiB",
-      "help": "Disk per session in GiB.",
-      "advanced": true
-    },
-    "tags": {
-      "label": "Session Tags",
-      "help": "Extra tags attached to created sessions.",
-      "advanced": true
     }
   }
 }
