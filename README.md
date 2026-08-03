@@ -17,8 +17,8 @@ openclaw plugins install clawhub:@tenkicloud/openclaw
 Or from a local checkout:
 
 ```bash
-git clone https://github.com/LuxorLabs/openclaw-tenki-sandbox
-openclaw plugins install ./openclaw-tenki-sandbox
+git clone https://github.com/LuxorLabs/tenki-openclaw
+openclaw plugins install ./tenki-openclaw
 ```
 
 ## Usage
