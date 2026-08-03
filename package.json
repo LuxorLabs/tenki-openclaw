@@ -1,5 +1,5 @@
 {
-  "name": "@tenkicloud/openclaw-sandbox",
+  "name": "@tenkicloud/openclaw",
   "version": "0.1.2",
   "description": "OpenClaw sandbox backend for Tenki Cloud microVM sessions via the @tenkicloud/sandbox SDK.",
   "repository": {
@@ -28,7 +28,7 @@
       "./index.ts"
     ],
     "install": {
-      "npmSpec": "@tenkicloud/openclaw-sandbox",
+      "npmSpec": "@tenkicloud/openclaw",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.7.1-2"
     },

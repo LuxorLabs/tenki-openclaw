@@ -8,10 +8,10 @@ Originally proposed as a bundled OpenClaw extension in [openclaw/openclaw#111792
 
 ## Install
 
-From ClawHub ([`@tenkicloud/openclaw-sandbox`](https://clawhub.ai)):
+From ClawHub ([`@tenkicloud/openclaw`](https://clawhub.ai)):
 
 ```bash
-openclaw plugins install clawhub:@tenkicloud/openclaw-sandbox
+openclaw plugins install clawhub:@tenkicloud/openclaw
 ```
 
 Or from a local checkout:
