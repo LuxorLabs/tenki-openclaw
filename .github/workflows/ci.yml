@@ -5,9 +5,12 @@ on:
     branches: [main]
   pull_request:
 
+# Tenki's own runners for everything except pull requests from FORKS, which stay
+# on GitHub-hosted runners: a public repo plus self-hosted runners would otherwise
+# let any fork PR execute code on our infrastructure.
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || 'tenki-standard-small-2c-4g' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
