@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: tenki-standard-small-2c-4g
     environment: npm-publish
     steps:
       - name: Checkout
