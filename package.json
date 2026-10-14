@@ -1,6 +1,6 @@
 {
   "name": "@tenkicloud/openclaw",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "OpenClaw sandbox backend for Tenki Cloud microVM sessions via the @tenkicloud/sandbox SDK.",
   "repository": {
     "type": "git",
@@ -17,11 +17,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@tenkicloud/sandbox": "0.5.2"
+    "@tenkicloud/sandbox": "^1.4.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
-    "openclaw": "2026.7.1-2",
+    "openclaw": "2026.10.3",
     "tsup": "^8.5.0",
     "typescript": "^5.9.0",
     "vitest": "^4.1.10"
@@ -39,7 +40,7 @@
       "pluginApi": ">=2026.7.1-2"
     },
     "build": {
-      "openclawVersion": "2026.7.1-2",
+      "openclawVersion": "2026.10.3",
       "bundledDist": true
     }
   }

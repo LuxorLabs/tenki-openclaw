@@ -21,7 +21,7 @@ import {
   formatPluginConfigIssue,
   mapPluginConfigIssues
 } from "openclaw/plugin-sdk/extension-shared";
-import { z } from "openclaw/plugin-sdk/zod";
+import { z } from "zod";
 var DEFAULT_WORKSPACE_ROOT = "/tmp/openclaw-sandboxes";
 var nonEmptyTrimmedString = (message) => z.string({ error: message }).trim().min(1, { error: message });
 var positiveNumber = (field) => z.number({ error: `${field} must be a number >= 1` }).min(1, {
@@ -601,6 +601,7 @@ var TenkiSandboxBackendImpl = class {
     if (reusable) {
       if (reusable.state === "PAUSED") {
         await reusable.resume();
+        await reusable.waitResumed();
       }
       await reusable.waitReady();
       return reusable;
@@ -610,7 +611,9 @@ var TenkiSandboxBackendImpl = class {
       tags: [TENKI_SESSION_TAG, this.params.runtimePaths.runtimeId, ...this.cfg.tags],
       workspaceId: this.cfg.workspaceId,
       image: this.cfg.image,
-      idleTimeoutMinutes: this.cfg.idleTimeoutMinutes,
+      // SDK 1.x ignores idleTimeoutMinutes (sandboxes no longer pause on idle);
+      // map the config knob to a hard session-lifetime cap instead.
+      maxDurationMs: this.cfg.idleTimeoutMinutes !== void 0 ? this.cfg.idleTimeoutMinutes * 6e4 : void 0,
       cpuCores: this.cfg.cpuCores,
       memoryMb: this.cfg.memoryMb,
       diskSizeGb: this.cfg.diskSizeGb,
