@@ -357,7 +357,10 @@ class TenkiSandboxBackendImpl {
       tags: [TENKI_SESSION_TAG, this.params.runtimePaths.runtimeId, ...this.cfg.tags],
       workspaceId: this.cfg.workspaceId,
       image: this.cfg.image,
-      idleTimeoutMinutes: this.cfg.idleTimeoutMinutes,
+      maxDurationMs:
+        this.cfg.maxDurationMinutes === undefined
+          ? undefined
+          : this.cfg.maxDurationMinutes * 60_000,
       cpuCores: this.cfg.cpuCores,
       memoryMb: this.cfg.memoryMb,
       diskSizeGb: this.cfg.diskSizeGb,

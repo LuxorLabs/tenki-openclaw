@@ -21,7 +21,7 @@ import {
   formatPluginConfigIssue,
   mapPluginConfigIssues
 } from "openclaw/plugin-sdk/extension-shared";
-import { z } from "openclaw/plugin-sdk/zod";
+import { z } from "zod";
 var DEFAULT_WORKSPACE_ROOT = "/tmp/openclaw-sandboxes";
 var nonEmptyTrimmedString = (message) => z.string({ error: message }).trim().min(1, { error: message });
 var positiveNumber = (field) => z.number({ error: `${field} must be a number >= 1` }).min(1, {
@@ -33,7 +33,7 @@ var TenkiPluginConfigSchema = z.strictObject({
   workspaceId: nonEmptyTrimmedString("workspaceId must be a non-empty string").optional(),
   image: nonEmptyTrimmedString("image must be a non-empty string").optional(),
   workspaceRoot: nonEmptyTrimmedString("workspaceRoot must be a non-empty string").optional(),
-  idleTimeoutMinutes: positiveNumber("idleTimeoutMinutes").optional(),
+  maxDurationMinutes: positiveNumber("maxDurationMinutes").optional(),
   cpuCores: positiveNumber("cpuCores").optional(),
   memoryMb: positiveNumber("memoryMb").optional(),
   diskSizeGb: positiveNumber("diskSizeGb").optional(),
@@ -90,7 +90,7 @@ function resolveTenkiPluginConfig(value) {
     workspaceId: cfg.workspaceId,
     image: cfg.image,
     workspaceRoot: normalizeWorkspaceRoot(cfg.workspaceRoot),
-    idleTimeoutMinutes: cfg.idleTimeoutMinutes,
+    maxDurationMinutes: cfg.maxDurationMinutes,
     cpuCores: cfg.cpuCores,
     memoryMb: cfg.memoryMb,
     diskSizeGb: cfg.diskSizeGb,
@@ -610,7 +610,7 @@ var TenkiSandboxBackendImpl = class {
       tags: [TENKI_SESSION_TAG, this.params.runtimePaths.runtimeId, ...this.cfg.tags],
       workspaceId: this.cfg.workspaceId,
       image: this.cfg.image,
-      idleTimeoutMinutes: this.cfg.idleTimeoutMinutes,
+      maxDurationMs: this.cfg.maxDurationMinutes === void 0 ? void 0 : this.cfg.maxDurationMinutes * 6e4,
       cpuCores: this.cfg.cpuCores,
       memoryMb: this.cfg.memoryMb,
       diskSizeGb: this.cfg.diskSizeGb,

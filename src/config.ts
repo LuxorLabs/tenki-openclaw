@@ -5,9 +5,10 @@ import {
   formatPluginConfigIssue,
   mapPluginConfigIssues,
 } from "openclaw/plugin-sdk/extension-shared";
-// Import zod through the host SDK so schema types and the runtime instance
-// match the ones openclaw's buildPluginConfigSchema expects.
-import { z } from "openclaw/plugin-sdk/zod";
+// The openclaw/plugin-sdk/zod re-export was removed from the published SDK, so
+// zod is a direct dependency. It is pinned to the exact version openclaw ships
+// so npm installs a single copy and buildPluginConfigSchema sees matching types.
+import { z } from "zod";
 
 type TenkiPluginConfig = {
   authToken?: string;
@@ -15,7 +16,7 @@ type TenkiPluginConfig = {
   workspaceId?: string;
   image?: string;
   workspaceRoot?: string;
-  idleTimeoutMinutes?: number;
+  maxDurationMinutes?: number;
   cpuCores?: number;
   memoryMb?: number;
   diskSizeGb?: number;
@@ -28,7 +29,7 @@ export type ResolvedTenkiPluginConfig = {
   workspaceId?: string;
   image?: string;
   workspaceRoot: string;
-  idleTimeoutMinutes?: number;
+  maxDurationMinutes?: number;
   cpuCores?: number;
   memoryMb?: number;
   diskSizeGb?: number;
@@ -51,7 +52,7 @@ const TenkiPluginConfigSchema = z.strictObject({
   workspaceId: nonEmptyTrimmedString("workspaceId must be a non-empty string").optional(),
   image: nonEmptyTrimmedString("image must be a non-empty string").optional(),
   workspaceRoot: nonEmptyTrimmedString("workspaceRoot must be a non-empty string").optional(),
-  idleTimeoutMinutes: positiveNumber("idleTimeoutMinutes").optional(),
+  maxDurationMinutes: positiveNumber("maxDurationMinutes").optional(),
   cpuCores: positiveNumber("cpuCores").optional(),
   memoryMb: positiveNumber("memoryMb").optional(),
   diskSizeGb: positiveNumber("diskSizeGb").optional(),
@@ -113,7 +114,7 @@ export function resolveTenkiPluginConfig(value: unknown): ResolvedTenkiPluginCon
     workspaceId: cfg.workspaceId,
     image: cfg.image,
     workspaceRoot: normalizeWorkspaceRoot(cfg.workspaceRoot),
-    idleTimeoutMinutes: cfg.idleTimeoutMinutes,
+    maxDurationMinutes: cfg.maxDurationMinutes,
     cpuCores: cfg.cpuCores,
     memoryMb: cfg.memoryMb,
     diskSizeGb: cfg.diskSizeGb,

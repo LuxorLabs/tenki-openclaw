@@ -58,7 +58,7 @@ Authentication uses `TENKI_AUTH_TOKEN` / `TENKI_API_KEY` from the environment (p
 | `workspaceId` | Tenki workspace the sessions are created in. |
 | `image` | Base image id for created sandbox sessions. Omit for the Tenki default image. |
 | `workspaceRoot` | Absolute path inside the session used for per-scope workspaces. |
-| `idleTimeoutMinutes` | Terminate the session after this many idle minutes. |
+| `maxDurationMinutes` | Terminate the session after this many minutes of total runtime. (Replaces `idleTimeoutMinutes`, which the Tenki SDK no longer honours.) |
 | `cpuCores` / `memoryMb` / `diskSizeGb` | Resources per session. |
 | `tags` | Extra tags attached to created sessions. |
 
@@ -67,6 +67,8 @@ Authentication uses `TENKI_AUTH_TOKEN` / `TENKI_API_KEY` from the environment (p
 Interactive exec spawns plain `ssh` against a loopback forwarder whose upstream is the SDK's gateway SSH stream — no `tenki` CLI required anywhere, and `usePty` maps to real PTY allocation (`ssh -tt`). The gateway stream terminates at Tenki's edge SSH gateway, which only accepts certificate auth: a dedicated ed25519 keypair is generated once under the OpenClaw state dir, and a short-lived per-session user certificate is minted through the SDK and re-minted automatically near expiry.
 
 ## Development
+
+Requires Node 24.22.1+ (or 26.12.1+), the floor set by the `openclaw` host package.
 
 ```bash
 npm install

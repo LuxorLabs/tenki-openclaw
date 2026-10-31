@@ -40,11 +40,11 @@
         "title": "Workspace Root",
         "description": "Absolute path inside the session used for per-scope workspaces."
       },
-      "idleTimeoutMinutes": {
+      "maxDurationMinutes": {
         "type": "number",
         "minimum": 1,
-        "title": "Idle Timeout Minutes",
-        "description": "Terminate the session after this many idle minutes."
+        "title": "Max Duration Minutes",
+        "description": "Terminate the session after this many minutes of total runtime. Omit for the Tenki default."
       },
       "cpuCores": {
         "type": "number",

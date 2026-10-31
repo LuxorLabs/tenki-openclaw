@@ -9,5 +9,5 @@ export default defineConfig({
   clean: true,
   // Host-provided plugin SDK and the plugin's own npm deps stay external;
   // OpenClaw installs declared dependencies alongside the plugin.
-  external: [/^openclaw(\/.*)?$/, "@tenkicloud/sandbox"],
+  external: [/^openclaw(\/.*)?$/, "@tenkicloud/sandbox", "zod"],
 });

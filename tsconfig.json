@@ -12,6 +12,6 @@
     "verbatimModuleSyntax": true,
     "rootDir": "."
   },
-  "include": ["./*.ts", "./src/**/*.ts"],
+  "include": ["./*.ts", "./src/**/*.ts", "./types/**/*.d.ts"],
   "exclude": ["./dist/**", "./node_modules/**"]
 }
