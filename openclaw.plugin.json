@@ -31,8 +31,8 @@
       "image": {
         "type": "string",
         "minLength": 1,
-        "title": "Base Image",
-        "description": "Base image id for created sandbox sessions. Omit for the Tenki default image."
+        "title": "Registry Image",
+        "description": "Tenki registry image ref to create sessions from (workspace/name:tag or name@<snapshot-id>, see `tenki sandbox registry list`). Omit for the Tenki default image."
       },
       "workspaceRoot": {
         "type": "string",

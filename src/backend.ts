@@ -22,10 +22,11 @@ import {
   buildValidatedExecRemoteCommand,
   createRemoteShellSandboxFsBridge,
   sanitizeEnvVars,
+  shellEscape,
 } from "openclaw/plugin-sdk/sandbox";
 import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
 import { resolveTenkiPluginConfig, type ResolvedTenkiPluginConfig } from "./config.js";
-import { buildPositionalArgsPrefix } from "./shell.js";
+import { buildPositionalArgsPrefix, buildStagedExecScript } from "./shell.js";
 import {
   buildSshExecArgv,
   ensureTenkiSshKeypair,
@@ -232,6 +233,7 @@ class TenkiSandboxBackendImpl {
   private sshForwarderPromise: Promise<TenkiSshForwarder> | null = null;
   private sshCert: TenkiSshSessionCert | null = null;
   private sshCertSessionId: string | null = null;
+  private readonly pendingExecs = new WeakMap<object, () => Promise<void>>();
 
   constructor(
     private readonly params: {
@@ -261,25 +263,43 @@ class TenkiSandboxBackendImpl {
         this.params.runtimePaths.remoteAgentWorkspaceDir,
       ],
       buildExecSpec: async ({ command, workdir, env, usePty }) => {
+        // The host no longer inlines env into the remote command (it throws on
+        // non-empty env); validate the command with an empty env and stage env
+        // + command as a script in the session, like the core SSH backend.
         const remoteCommand = buildValidatedExecRemoteCommand({
           command,
           workdir: workdir ?? this.params.runtimePaths.remoteWorkspaceDir,
-          env,
+          env: {},
         });
         await this.ensureRuntime();
         const session = await this.getSession();
         const { keypair, cert, forwarder } = await this.ensureSshTransport(session);
+        const staged = await this.stageExecScript(session, { remoteCommand, env, tty: usePty });
+        const finalizeToken = {};
+        this.pendingExecs.set(finalizeToken, staged.cleanup);
         return {
           argv: buildSshExecArgv({
             privateKeyPath: keypair.privateKeyPath,
             certificatePath: cert.certificatePath,
             port: forwarder.port,
             usePty,
-            remoteCommand,
+            remoteCommand: `/bin/sh ${shellEscape(staged.scriptPath)}`,
           }),
           env: sanitizeEnvVars(process.env).allowed,
           stdinMode: "pipe-open",
+          finalizeToken,
         };
+      },
+      finalizeExec: async ({ token }) => {
+        if (!token || typeof token !== "object") {
+          return;
+        }
+        const cleanup = this.pendingExecs.get(token);
+        if (!cleanup) {
+          return;
+        }
+        this.pendingExecs.delete(token);
+        await cleanup();
       },
       runShellCommand: async (command) => await this.runRemoteShellScript(command),
       createFsBridge: ({ sandbox }) =>
@@ -449,6 +469,28 @@ class TenkiSandboxBackendImpl {
       roots.find((root) => isRemotePathInsideRoot(root, workdir)) ??
       this.params.runtimePaths.remoteWorkspaceDir
     );
+  }
+
+  /**
+   * Stage the per-exec script (env exports + `exec <remote command>`) as a
+   * session file. The script deletes itself on start; `cleanup` is the
+   * fallback for execs that never launched (e.g. ssh spawn failure).
+   */
+  private async stageExecScript(
+    session: Session,
+    params: { remoteCommand: string; env: Record<string, string>; tty: boolean },
+  ): Promise<{ scriptPath: string; cleanup: () => Promise<void> }> {
+    const scriptPath = `${TENKI_SESSION_WORKDIR}/.openclaw-exec-${randomUUID()}.sh`;
+    const script = buildStagedExecScript({ scriptPath, ...params });
+    await session.writeFile(scriptPath, script);
+    const cleanup = async () => {
+      await this.execShell(session, {
+        script: 'rm -f -- "$1"',
+        args: [scriptPath],
+        allowFailure: true,
+      }).catch(() => undefined);
+    };
+    return { scriptPath, cleanup };
   }
 
   async runRemoteShellScript(

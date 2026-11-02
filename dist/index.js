@@ -10,7 +10,8 @@ import { isTerminal, TenkiSandbox } from "@tenkicloud/sandbox";
 import {
   buildValidatedExecRemoteCommand,
   createRemoteShellSandboxFsBridge,
-  sanitizeEnvVars
+  sanitizeEnvVars,
+  shellEscape as shellEscape2
 } from "openclaw/plugin-sdk/sandbox";
 import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
 
@@ -106,6 +107,30 @@ function buildPositionalArgsPrefix(args) {
   }
   return `set -- ${args.map((arg) => shellEscape(arg)).join(" ")}
 `;
+}
+var POSIX_ENV_NAME = /^[A-Za-z_][A-Za-z0-9_]*$/;
+function buildStagedExecScript(params) {
+  const env = params.tty && params.env.TERM === void 0 ? { TERM: "xterm-256color", ...params.env } : params.env;
+  for (const [key, value] of Object.entries(env)) {
+    if (!POSIX_ENV_NAME.test(key)) {
+      throw new Error(
+        `Invalid sandbox environment variable name ${JSON.stringify(key)}; use a POSIX variable name.`
+      );
+    }
+    if (value.includes("\0")) {
+      throw new Error(
+        `Invalid sandbox environment variable ${JSON.stringify(key)}; values must not contain NUL bytes.`
+      );
+    }
+  }
+  return [
+    "#!/bin/sh",
+    "set -e",
+    `rm -f -- ${shellEscape(params.scriptPath)}`,
+    ...Object.entries(env).map(([key, value]) => `export ${key}=${shellEscape(value)}`),
+    `exec ${params.remoteCommand}`,
+    ""
+  ].join("\n");
 }
 
 // src/ssh-transport.ts
@@ -291,7 +316,10 @@ async function createLocalTarball(localDir) {
   await assertSafeUploadSymlinks(localDir);
   return await new Promise((resolve, reject) => {
     const tar = spawn2("tar", ["-C", localDir, "-cf", "-", "."], {
-      stdio: ["ignore", "pipe", "pipe"]
+      stdio: ["ignore", "pipe", "pipe"],
+      // macOS bsdtar otherwise emits AppleDouble `._*` sidecar entries for
+      // files carrying extended attributes, which then litter the sandbox.
+      env: { ...process.env, COPYFILE_DISABLE: "1" }
     });
     const chunks = [];
     const stderr = [];
@@ -511,6 +539,7 @@ var TenkiSandboxBackendImpl = class {
   sshForwarderPromise = null;
   sshCert = null;
   sshCertSessionId = null;
+  pendingExecs = /* @__PURE__ */ new WeakMap();
   get cfg() {
     return this.params.pluginConfig;
   }
@@ -533,22 +562,37 @@ var TenkiSandboxBackendImpl = class {
         const remoteCommand = buildValidatedExecRemoteCommand({
           command,
           workdir: workdir ?? this.params.runtimePaths.remoteWorkspaceDir,
-          env
+          env: {}
         });
         await this.ensureRuntime();
         const session = await this.getSession();
         const { keypair, cert, forwarder } = await this.ensureSshTransport(session);
+        const staged = await this.stageExecScript(session, { remoteCommand, env, tty: usePty });
+        const finalizeToken = {};
+        this.pendingExecs.set(finalizeToken, staged.cleanup);
         return {
           argv: buildSshExecArgv({
             privateKeyPath: keypair.privateKeyPath,
             certificatePath: cert.certificatePath,
             port: forwarder.port,
             usePty,
-            remoteCommand
+            remoteCommand: `/bin/sh ${shellEscape2(staged.scriptPath)}`
           }),
           env: sanitizeEnvVars(process.env).allowed,
-          stdinMode: "pipe-open"
+          stdinMode: "pipe-open",
+          finalizeToken
         };
+      },
+      finalizeExec: async ({ token }) => {
+        if (!token || typeof token !== "object") {
+          return;
+        }
+        const cleanup = this.pendingExecs.get(token);
+        if (!cleanup) {
+          return;
+        }
+        this.pendingExecs.delete(token);
+        await cleanup();
       },
       runShellCommand: async (command) => await this.runRemoteShellScript(command),
       createFsBridge: ({ sandbox }) => createRemoteShellSandboxFsBridge({
@@ -681,6 +725,24 @@ var TenkiSandboxBackendImpl = class {
       this.params.runtimePaths.remoteWorkspaceDir
     ];
     return roots.find((root) => isRemotePathInsideRoot(root, workdir)) ?? this.params.runtimePaths.remoteWorkspaceDir;
+  }
+  /**
+   * Stage the per-exec script (env exports + `exec <remote command>`) as a
+   * session file. The script deletes itself on start; `cleanup` is the
+   * fallback for execs that never launched (e.g. ssh spawn failure).
+   */
+  async stageExecScript(session, params) {
+    const scriptPath = `${TENKI_SESSION_WORKDIR}/.openclaw-exec-${randomUUID()}.sh`;
+    const script = buildStagedExecScript({ scriptPath, ...params });
+    await session.writeFile(scriptPath, script);
+    const cleanup = async () => {
+      await this.execShell(session, {
+        script: 'rm -f -- "$1"',
+        args: [scriptPath],
+        allowFailure: true
+      }).catch(() => void 0);
+    };
+    return { scriptPath, cleanup };
   }
   async runRemoteShellScript(params) {
     await this.ensureRuntime();

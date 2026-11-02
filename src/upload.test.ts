@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { mkdtempSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -17,6 +18,17 @@ describe("createLocalTarball", () => {
     const tarball = await createLocalTarball(dir);
     expect(tarball.length).toBeGreaterThan(0);
     expect(tarball.toString("utf8")).toContain("nested/file.txt");
+  });
+
+  it.runIf(process.platform === "darwin")("omits AppleDouble sidecars for xattr files", async () => {
+    const dir = makeWorkspace();
+    writeFileSync(path.join(dir, "NOTE.txt"), "hello");
+    execFileSync("xattr", ["-w", "com.example.test", "1", path.join(dir, "NOTE.txt")]);
+
+    const tarball = await createLocalTarball(dir);
+    const listing = tarball.toString("utf8");
+    expect(listing).toContain("NOTE.txt");
+    expect(listing).not.toContain("._NOTE.txt");
   });
 
   it("allows symlinks resolving inside the workspace", async () => {
