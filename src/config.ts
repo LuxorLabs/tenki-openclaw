@@ -5,9 +5,8 @@ import {
   formatPluginConfigIssue,
   mapPluginConfigIssues,
 } from "openclaw/plugin-sdk/extension-shared";
-// Import zod through the host SDK so schema types and the runtime instance
-// match the ones openclaw's buildPluginConfigSchema expects.
-import { z } from "openclaw/plugin-sdk/zod";
+// openclaw dropped plugin-sdk/zod; zod is pinned to openclaw's own version so schema types match.
+import { z } from "zod";
 
 type TenkiPluginConfig = {
   authToken?: string;

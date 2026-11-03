@@ -17,11 +17,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@tenkicloud/sandbox": "0.5.2"
+    "@tenkicloud/sandbox": "0.5.2",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
-    "openclaw": "2026.7.1-2",
+    "openclaw": "2026.10.10",
     "tsup": "^8.5.0",
     "typescript": "^5.9.0",
     "vitest": "^4.1.10"
@@ -39,7 +40,7 @@
       "pluginApi": ">=2026.7.1-2"
     },
     "build": {
-      "openclawVersion": "2026.7.1-2",
+      "openclawVersion": "2026.10.10",
       "bundledDist": true
     }
   }

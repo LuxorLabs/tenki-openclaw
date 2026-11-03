@@ -21,7 +21,7 @@ import {
   formatPluginConfigIssue,
   mapPluginConfigIssues
 } from "openclaw/plugin-sdk/extension-shared";
-import { z } from "openclaw/plugin-sdk/zod";
+import { z } from "zod";
 var DEFAULT_WORKSPACE_ROOT = "/tmp/openclaw-sandboxes";
 var nonEmptyTrimmedString = (message) => z.string({ error: message }).trim().min(1, { error: message });
 var positiveNumber = (field) => z.number({ error: `${field} must be a number >= 1` }).min(1, {
