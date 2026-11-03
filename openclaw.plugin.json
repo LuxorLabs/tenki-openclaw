@@ -43,8 +43,8 @@
       "idleTimeoutMinutes": {
         "type": "number",
         "minimum": 1,
-        "title": "Idle Timeout Minutes",
-        "description": "Terminate the session after this many idle minutes."
+        "title": "Session Lifetime Minutes",
+        "description": "Terminate the session after this many minutes (SDK maxDurationMs). Tenki sessions no longer pause on idle."
       },
       "cpuCores": {
         "type": "number",

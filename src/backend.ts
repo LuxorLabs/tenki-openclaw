@@ -348,6 +348,9 @@ class TenkiSandboxBackendImpl {
     if (reusable) {
       if (reusable.state === "PAUSED") {
         await reusable.resume();
+        // waitReady would spin until timeout if the resume reverts to a stopped
+        // state; waitResumed surfaces the server-side lastResumeError instead.
+        await reusable.waitResumed();
       }
       await reusable.waitReady();
       return reusable;
@@ -357,7 +360,12 @@ class TenkiSandboxBackendImpl {
       tags: [TENKI_SESSION_TAG, this.params.runtimePaths.runtimeId, ...this.cfg.tags],
       workspaceId: this.cfg.workspaceId,
       image: this.cfg.image,
-      idleTimeoutMinutes: this.cfg.idleTimeoutMinutes,
+      // SDK 1.x ignores idleTimeoutMinutes (sandboxes no longer pause on idle);
+      // map the config knob to a hard session-lifetime cap instead.
+      maxDurationMs:
+        this.cfg.idleTimeoutMinutes !== undefined
+          ? this.cfg.idleTimeoutMinutes * 60_000
+          : undefined,
       cpuCores: this.cfg.cpuCores,
       memoryMb: this.cfg.memoryMb,
       diskSizeGb: this.cfg.diskSizeGb,

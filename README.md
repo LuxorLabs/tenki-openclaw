@@ -58,7 +58,7 @@ Authentication uses `TENKI_AUTH_TOKEN` / `TENKI_API_KEY` from the environment (p
 | `workspaceId` | Tenki workspace the sessions are created in. |
 | `image` | Base image id for created sandbox sessions. Omit for the Tenki default image. |
 | `workspaceRoot` | Absolute path inside the session used for per-scope workspaces. |
-| `idleTimeoutMinutes` | Terminate the session after this many idle minutes. |
+| `idleTimeoutMinutes` | Terminate the session after this many minutes (the SDK's `maxDurationMs`). Tenki sessions no longer pause on idle. |
 | `cpuCores` / `memoryMb` / `diskSizeGb` | Resources per session. |
 | `tags` | Extra tags attached to created sessions. |
 
