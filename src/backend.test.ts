@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveTenkiRuntimePaths } from "./backend.js";
-import { buildPositionalArgsPrefix } from "./shell.js";
+import { buildPositionalArgsPrefix, buildStagedExecScript } from "./shell.js";
 
 describe("buildPositionalArgsPrefix", () => {
   it("returns empty for no args", () => {
@@ -46,5 +46,48 @@ describe("resolveTenkiRuntimePaths", () => {
   it("falls back to a session id for empty scope keys", () => {
     const paths = resolveTenkiRuntimePaths("/tmp/openclaw-sandboxes", "  ");
     expect(paths.runtimeId).toMatch(/^oc-tenki-session-[0-9a-f]{1,8}$/);
+  });
+});
+
+describe("buildStagedExecScript", () => {
+  const scriptPath = "/home/tenki/.openclaw-exec-abc.sh";
+
+  it("self-deletes, exports env with shell quoting, then execs the command", () => {
+    const script = buildStagedExecScript({
+      scriptPath,
+      remoteCommand: "/bin/sh -c 'cd /w && echo hi'",
+      env: { FOO: "it's", BAR: "plain" },
+      tty: false,
+    });
+    expect(script.split("\n")).toEqual([
+      "#!/bin/sh",
+      "set -e",
+      "rm -f -- '/home/tenki/.openclaw-exec-abc.sh'",
+      "export FOO='it'\"'\"'s'",
+      "export BAR='plain'",
+      "exec /bin/sh -c 'cd /w && echo hi'",
+      "",
+    ]);
+  });
+
+  it("defaults TERM for tty execs without overriding an explicit value", () => {
+    expect(buildStagedExecScript({ scriptPath, remoteCommand: "true", env: {}, tty: true })).toContain(
+      "export TERM='xterm-256color'",
+    );
+    expect(
+      buildStagedExecScript({ scriptPath, remoteCommand: "true", env: { TERM: "dumb" }, tty: true }),
+    ).not.toContain("xterm-256color");
+    expect(buildStagedExecScript({ scriptPath, remoteCommand: "true", env: {}, tty: false })).not.toContain(
+      "TERM",
+    );
+  });
+
+  it("rejects non-POSIX names and NUL bytes", () => {
+    expect(() =>
+      buildStagedExecScript({ scriptPath, remoteCommand: "true", env: { "BAD-NAME": "x" }, tty: false }),
+    ).toThrow(/POSIX variable name/);
+    expect(() =>
+      buildStagedExecScript({ scriptPath, remoteCommand: "true", env: { OK: "a\0b" }, tty: false }),
+    ).toThrow(/NUL bytes/);
   });
 });

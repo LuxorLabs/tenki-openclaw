@@ -13,6 +13,9 @@ export async function createLocalTarball(localDir: string): Promise<Buffer> {
   return await new Promise<Buffer>((resolve, reject) => {
     const tar = spawn("tar", ["-C", localDir, "-cf", "-", "."], {
       stdio: ["ignore", "pipe", "pipe"],
+      // macOS bsdtar otherwise emits AppleDouble `._*` sidecar entries for
+      // files carrying extended attributes, which then litter the sandbox.
+      env: { ...process.env, COPYFILE_DISABLE: "1" },
     });
     const chunks: Buffer[] = [];
     const stderr: Buffer[] = [];
