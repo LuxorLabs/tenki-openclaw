@@ -13,14 +13,14 @@
         "type": "string",
         "minLength": 1,
         "title": "Auth Token",
-        "description": "Tenki API token. Prefer the TENKI_AUTH_TOKEN or TENKI_API_KEY environment variable over storing it in config.",
+        "description": "Tenki API token. Prefer the LUXORAI_AUTH_TOKEN / LUXORAI_API_KEY (read first) or TENKI_AUTH_TOKEN / TENKI_API_KEY environment variable over storing it in config.",
         "writeOnly": true
       },
       "baseUrl": {
         "type": "string",
         "minLength": 1,
         "title": "API Base URL",
-        "description": "Tenki API endpoint override. Defaults to the SDK's TENKI_API_ENDPOINT / TENKI_API_URL environment fallback."
+        "description": "Tenki API endpoint override. Defaults to LUXORAI_API_ENDPOINT / LUXORAI_API_URL, then the SDK's TENKI_API_ENDPOINT / TENKI_API_URL environment fallback."
       },
       "workspaceId": {
         "type": "string",

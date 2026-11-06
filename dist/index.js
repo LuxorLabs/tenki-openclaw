@@ -97,6 +97,13 @@ function resolveTenkiPluginConfig(value) {
     tags: cfg.tags ?? []
   };
 }
+function readLuxorAiEnv(...suffixes) {
+  for (const suffix of suffixes) {
+    const value = process.env[`LUXORAI_${suffix}`]?.trim();
+    if (value) return value;
+  }
+  return void 0;
+}
 
 // src/shell.ts
 import { shellEscape } from "openclaw/plugin-sdk/sandbox";
@@ -438,8 +445,9 @@ var VALIDATE_REMOTE_WORKDIR_SCRIPT = [
 ].join("\n");
 function createTenkiClient(cfg) {
   return new TenkiSandbox({
-    authToken: cfg.authToken,
-    baseUrl: cfg.baseUrl
+    authToken: cfg.authToken ?? readLuxorAiEnv("AUTH_TOKEN", "API_KEY"),
+    baseUrl: cfg.baseUrl ?? readLuxorAiEnv("API_ENDPOINT", "API_URL"),
+    gatewayAddress: readLuxorAiEnv("SANDBOX_GATEWAY_URL")
   });
 }
 async function findRuntimeSessions(cfg, runtimeId) {
@@ -774,6 +782,7 @@ function buildTenkiSandboxRuntimeId(scopeKey) {
 }
 
 // index.ts
+var SANDBOX_BACKEND_IDS = ["tenki", "luxor"];
 var index_default = definePluginEntry({
   id: "tenki",
   name: "Tenki Cloud Sandbox",
@@ -784,14 +793,16 @@ var index_default = definePluginEntry({
       return;
     }
     const pluginConfig = resolveTenkiPluginConfig(api.pluginConfig);
-    registerSandboxBackend("tenki", {
+    const registration = {
       factory: createTenkiSandboxBackendFactory({ pluginConfig }),
       manager: createTenkiSandboxBackendManager({ pluginConfig }),
       resolveWorkdir: ({ scopeKey }) => resolveTenkiRuntimePaths(pluginConfig.workspaceRoot, scopeKey).remoteWorkspaceDir
-    });
+    };
+    for (const id of SANDBOX_BACKEND_IDS) registerSandboxBackend(id, registration);
   }
 });
 export {
+  SANDBOX_BACKEND_IDS,
   index_default as default
 };
 //# sourceMappingURL=index.js.map

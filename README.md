@@ -47,7 +47,7 @@ openclaw plugins install ./tenki-openclaw
 }
 ```
 
-Authentication uses `TENKI_AUTH_TOKEN` / `TENKI_API_KEY` from the environment (preferred), or the `authToken` plugin config value.
+Authentication uses `TENKI_AUTH_TOKEN` / `TENKI_API_KEY` from the environment (preferred), or the `authToken` plugin config value. `LUXORAI_AUTH_TOKEN`, `LUXORAI_API_KEY`, `LUXORAI_API_ENDPOINT`, `LUXORAI_API_URL` and `LUXORAI_SANDBOX_GATEWAY_URL` are read before their `TENKI_*` equivalents. The backend is also registered as `luxor`, so `"backend": "luxor"` selects the same runtime.
 
 ### Config reference
 
