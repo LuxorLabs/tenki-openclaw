@@ -120,3 +120,12 @@ export function resolveTenkiPluginConfig(value: unknown): ResolvedTenkiPluginCon
     tags: cfg.tags ?? [],
   };
 }
+
+/** First non-empty `LUXORAI_<suffix>`; the SDK itself falls back to the `TENKI_*` names. */
+export function readLuxorAiEnv(...suffixes: string[]): string | undefined {
+  for (const suffix of suffixes) {
+    const value = process.env[`LUXORAI_${suffix}`]?.trim();
+    if (value) return value;
+  }
+  return undefined;
+}
