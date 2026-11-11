@@ -3,8 +3,8 @@
   "activation": {
     "onStartup": true
   },
-  "name": "Tenki Cloud Sandbox",
-  "description": "OpenClaw sandbox backend that runs tool execution in remote Tenki Cloud microVM sessions.",
+  "name": "Luxor Sandbox",
+  "description": "OpenClaw sandbox backend that runs tool execution in remote Luxor Sandbox microVM sessions.",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
@@ -13,26 +13,26 @@
         "type": "string",
         "minLength": 1,
         "title": "Auth Token",
-        "description": "Tenki API token. Prefer the LUXORAI_AUTH_TOKEN / LUXORAI_API_KEY (read first) or TENKI_AUTH_TOKEN / TENKI_API_KEY environment variable over storing it in config.",
+        "description": "Luxor API token. Prefer the LUXORAI_AUTH_TOKEN / LUXORAI_API_KEY (read first) or TENKI_AUTH_TOKEN / TENKI_API_KEY environment variable over storing it in config.",
         "writeOnly": true
       },
       "baseUrl": {
         "type": "string",
         "minLength": 1,
         "title": "API Base URL",
-        "description": "Tenki API endpoint override. Defaults to LUXORAI_API_ENDPOINT / LUXORAI_API_URL, then the SDK's TENKI_API_ENDPOINT / TENKI_API_URL environment fallback."
+        "description": "Luxor API endpoint override. Defaults to LUXORAI_API_ENDPOINT / LUXORAI_API_URL, then the SDK's TENKI_API_ENDPOINT / TENKI_API_URL environment fallback."
       },
       "workspaceId": {
         "type": "string",
         "minLength": 1,
         "title": "Workspace ID",
-        "description": "Tenki workspace the sessions are created in."
+        "description": "Luxor workspace the sessions are created in."
       },
       "image": {
         "type": "string",
         "minLength": 1,
         "title": "Base Image",
-        "description": "Base image id for created sandbox sessions. Omit for the Tenki default image."
+        "description": "Base image id for created sandbox sessions. Omit for the Luxor default image."
       },
       "workspaceRoot": {
         "type": "string",
