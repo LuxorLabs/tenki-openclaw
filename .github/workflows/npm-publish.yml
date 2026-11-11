@@ -27,7 +27,8 @@ concurrency:
 
 jobs:
   publish:
-    runs-on: tenki-standard-small-2c-4g
+    # GitHub-hosted on purpose: npm supports neither provenance nor trusted publishing from self-hosted runners.
+    runs-on: ubuntu-latest
     environment: npm-publish
     steps:
       - name: Checkout
