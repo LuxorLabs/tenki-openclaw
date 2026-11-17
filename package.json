@@ -1,6 +1,6 @@
 {
   "name": "@tenkicloud/openclaw",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "OpenClaw sandbox backend for Luxor Sandbox microVM sessions on Luxor Agent Cloud by Luxor AI.",
   "homepage": "https://luxor.ai/docs",
   "keywords": [
