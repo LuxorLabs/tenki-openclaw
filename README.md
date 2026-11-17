@@ -49,20 +49,20 @@ openclaw plugins install ./tenki-openclaw
 }
 ```
 
-Authentication uses `LUXORAI_AUTH_TOKEN` / `LUXORAI_API_KEY` from the environment (preferred), or the `authToken` plugin config value. `LUXORAI_API_ENDPOINT`, `LUXORAI_API_URL` and `LUXORAI_SANDBOX_GATEWAY_URL` override the defaults. The `TENKI_*` equivalents are still accepted and read after the `LUXORAI_*` ones. The backend is also registered as `luxor`, so `"backend": "luxor"` selects the same runtime.
+Authentication uses `LUXOR_AUTH_TOKEN` / `LUXOR_API_KEY` from the environment (preferred), or the `authToken` plugin config value. `LUXOR_API_ENDPOINT`, `LUXOR_API_URL` and `LUXOR_SANDBOX_GATEWAY_URL` override the defaults. The `TENKI_*` equivalents are still accepted and read after the `LUXOR_*` ones. `LUXOR_API_KEY` is only used when it starts with `lx_` or `tk_`; any other value is ignored. The backend is also registered as `luxor`, so `"backend": "luxor"` selects the same runtime.
 
 ### Config reference
 
-| Key                                    | Description                                                                                                                                          |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `authToken`                            | Luxor API token. Prefer the `LUXORAI_AUTH_TOKEN` / `LUXORAI_API_KEY` env vars (`TENKI_*` still accepted) over storing it in config.                  |
-| `baseUrl`                              | Luxor API endpoint override. Defaults to `LUXORAI_API_ENDPOINT` / `LUXORAI_API_URL`, then the SDK's `TENKI_API_ENDPOINT` / `TENKI_API_URL` fallback. |
-| `workspaceId`                          | Luxor workspace the sessions are created in.                                                                                                         |
-| `image`                                | Base image id for created sandbox sessions. Omit for the Luxor default image.                                                                        |
-| `workspaceRoot`                        | Absolute path inside the session used for per-scope workspaces.                                                                                      |
-| `idleTimeoutMinutes`                   | Terminate the session after this many idle minutes.                                                                                                  |
-| `cpuCores` / `memoryMb` / `diskSizeGb` | Resources per session.                                                                                                                               |
-| `tags`                                 | Extra tags attached to created sessions.                                                                                                             |
+| Key                                    | Description                                                                                                                                |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `authToken`                            | Luxor API token. Prefer the `LUXOR_AUTH_TOKEN` / `LUXOR_API_KEY` env vars (`TENKI_*` still accepted) over storing it in config.            |
+| `baseUrl`                              | Luxor API endpoint override. Defaults to `LUXOR_API_ENDPOINT` / `LUXOR_API_URL`, then the `TENKI_API_ENDPOINT` / `TENKI_API_URL` fallback. |
+| `workspaceId`                          | Luxor workspace the sessions are created in.                                                                                               |
+| `image`                                | Base image id for created sandbox sessions. Omit for the Luxor default image.                                                              |
+| `workspaceRoot`                        | Absolute path inside the session used for per-scope workspaces.                                                                            |
+| `idleTimeoutMinutes`                   | Terminate the session after this many idle minutes.                                                                                        |
+| `cpuCores` / `memoryMb` / `diskSizeGb` | Resources per session.                                                                                                                     |
+| `tags`                                 | Extra tags attached to created sessions.                                                                                                   |
 
 ## How exec works
 

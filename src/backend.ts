@@ -25,7 +25,7 @@ import {
 } from "openclaw/plugin-sdk/sandbox";
 import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
 import {
-  readLuxorAiEnv,
+  readLuxorEnv,
   resolveTenkiPluginConfig,
   type ResolvedTenkiPluginConfig,
 } from "./config.js";
@@ -142,11 +142,11 @@ type ResolvedTenkiRuntimePaths = {
 };
 
 function createTenkiClient(cfg: ResolvedTenkiPluginConfig): TenkiSandbox {
-  // Plugin config, then LUXORAI_*, then the SDK's own TENKI_* env fallback.
+  // Plugin config, then LUXOR_*, then the legacy TENKI_* env names.
   return new TenkiSandbox({
-    authToken: cfg.authToken ?? readLuxorAiEnv("AUTH_TOKEN", "API_KEY"),
-    baseUrl: cfg.baseUrl ?? readLuxorAiEnv("API_ENDPOINT", "API_URL"),
-    gatewayAddress: readLuxorAiEnv("SANDBOX_GATEWAY_URL"),
+    authToken: cfg.authToken ?? readLuxorEnv("AUTH_TOKEN", "API_KEY"),
+    baseUrl: cfg.baseUrl ?? readLuxorEnv("API_ENDPOINT", "API_URL"),
+    gatewayAddress: readLuxorEnv("SANDBOX_GATEWAY_URL"),
   });
 }
 

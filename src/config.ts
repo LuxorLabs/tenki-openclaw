@@ -121,11 +121,17 @@ export function resolveTenkiPluginConfig(value: unknown): ResolvedTenkiPluginCon
   };
 }
 
-/** First non-empty `LUXORAI_<suffix>`; the SDK itself falls back to the `TENKI_*` names. */
-export function readLuxorAiEnv(...suffixes: string[]): string | undefined {
-  for (const suffix of suffixes) {
-    const value = process.env[`LUXORAI_${suffix}`]?.trim();
-    if (value) return value;
+/** First non-empty `LUXOR_<suffix>`, then the legacy `TENKI_<suffix>`. */
+export function readLuxorEnv(...suffixes: string[]): string | undefined {
+  for (const prefix of ["LUXOR_", "TENKI_"]) {
+    for (const suffix of suffixes) {
+      const name = `${prefix}${suffix}`;
+      const value = process.env[name]?.trim();
+      if (!value) continue;
+      // LUXOR_API_KEY may hold a Luxor Mining Pool key instead.
+      if (name === "LUXOR_API_KEY" && !/^(lx|tk)_/.test(value)) continue;
+      return value;
+    }
   }
   return undefined;
 }
