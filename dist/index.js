@@ -97,10 +97,15 @@ function resolveTenkiPluginConfig(value) {
     tags: cfg.tags ?? []
   };
 }
-function readLuxorAiEnv(...suffixes) {
-  for (const suffix of suffixes) {
-    const value = process.env[`LUXORAI_${suffix}`]?.trim();
-    if (value) return value;
+function readLuxorEnv(...suffixes) {
+  for (const prefix of ["LUXOR_", "TENKI_"]) {
+    for (const suffix of suffixes) {
+      const name = `${prefix}${suffix}`;
+      const value = process.env[name]?.trim();
+      if (!value) continue;
+      if (name === "LUXOR_API_KEY" && !/^(lx|tk)_/.test(value)) continue;
+      return value;
+    }
   }
   return void 0;
 }
@@ -445,9 +450,9 @@ var VALIDATE_REMOTE_WORKDIR_SCRIPT = [
 ].join("\n");
 function createTenkiClient(cfg) {
   return new TenkiSandbox({
-    authToken: cfg.authToken ?? readLuxorAiEnv("AUTH_TOKEN", "API_KEY"),
-    baseUrl: cfg.baseUrl ?? readLuxorAiEnv("API_ENDPOINT", "API_URL"),
-    gatewayAddress: readLuxorAiEnv("SANDBOX_GATEWAY_URL")
+    authToken: cfg.authToken ?? readLuxorEnv("AUTH_TOKEN", "API_KEY"),
+    baseUrl: cfg.baseUrl ?? readLuxorEnv("API_ENDPOINT", "API_URL"),
+    gatewayAddress: readLuxorEnv("SANDBOX_GATEWAY_URL")
   });
 }
 async function findRuntimeSessions(cfg, runtimeId) {

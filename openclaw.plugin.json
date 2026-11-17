@@ -13,14 +13,14 @@
         "type": "string",
         "minLength": 1,
         "title": "Auth Token",
-        "description": "Luxor API token. Prefer the LUXORAI_AUTH_TOKEN / LUXORAI_API_KEY (read first) or TENKI_AUTH_TOKEN / TENKI_API_KEY environment variable over storing it in config.",
+        "description": "Luxor API token. Prefer the LUXOR_AUTH_TOKEN / LUXOR_API_KEY (read first) or TENKI_AUTH_TOKEN / TENKI_API_KEY environment variable over storing it in config. LUXOR_API_KEY is only used when it starts with lx_ or tk_; any other value is ignored.",
         "writeOnly": true
       },
       "baseUrl": {
         "type": "string",
         "minLength": 1,
         "title": "API Base URL",
-        "description": "Luxor API endpoint override. Defaults to LUXORAI_API_ENDPOINT / LUXORAI_API_URL, then the SDK's TENKI_API_ENDPOINT / TENKI_API_URL environment fallback."
+        "description": "Luxor API endpoint override. Defaults to LUXOR_API_ENDPOINT / LUXOR_API_URL, then the TENKI_API_ENDPOINT / TENKI_API_URL environment fallback."
       },
       "workspaceId": {
         "type": "string",
